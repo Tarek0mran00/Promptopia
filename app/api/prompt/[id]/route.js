@@ -44,19 +44,6 @@ export const PATCH = async (request,{params})=> {
     }
 }
 
-export const POST = async (request) => {
-    const { userId, prompt, tag } = await request.json();
-
-    try {
-        await connectToDB();
-        const newPrompt = new Prompt({ creator: userId, prompt, tag });
-
-        await newPrompt.save();
-        return new Response(JSON.stringify(newPrompt), { status: 201 })
-    } catch (error) {
-        return new Response("Failed to create a new prompt", { status: 500 });
-    }
-}
 
 // Delete a specific prompt
 export const DELETE = async (request, { params }) => {
