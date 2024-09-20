@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import Form from "@components/Form";
 
 const UpdatePrompt = () => {
@@ -10,11 +9,15 @@ const UpdatePrompt = () => {
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
 
-  const [post, setPost] = useState({ prompt: "", tag: "", });
+  const [post, setPost] = useState({ prompt: "", tag: "" });
   const [submitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getPromptDetails = async () => {
+      if (!promptId) return;
+
+      setLoading(true); // Start loading
       const response = await fetch(`/api/prompt/${promptId}`);
       const data = await response.json();
 
@@ -22,11 +25,18 @@ const UpdatePrompt = () => {
         prompt: data.prompt,
         tag: data.tag,
       });
+      setLoading(false); // Stop loading
     };
 
-    if (promptId) getPromptDetails();
+    getPromptDetails();
   }, [promptId]);
 
+  // Fallback while loading data
+  if (loading) {
+    return <h1>Fallback: Loading prompt data...</h1>;
+  }
+
+  // Form submission handler
   const updatePrompt = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -54,7 +64,7 @@ const UpdatePrompt = () => {
 
   return (
     <Form
-      type='Edit'
+      type="Edit"
       post={post}
       setPost={setPost}
       submitting={submitting}
