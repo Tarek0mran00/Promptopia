@@ -40,6 +40,17 @@ const Feed = () => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const response = await fetch(`/api/prompt`);
+      const data = await response.json();
+
+      setAllPosts(data);
+    };
+
+    if (session?.user.id) fetchPosts();
+  }, [session?.user.id]);
+
   const filterPrompts = (searchtext) => {
     const regex = new RegExp(searchtext, "i"); // 'i' flag for case-insensitive search
     return allPosts.filter(
